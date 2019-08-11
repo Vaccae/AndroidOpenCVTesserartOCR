@@ -4,6 +4,8 @@
 #include <android/bitmap.h>
 #include <opencv2/opencv.hpp>
 #include "testcv.h"
+#include "facedetector.h"
+#include "opticalflow.h"
 
 #define LOG_TAG "System.out"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -115,7 +117,9 @@ Java_dem_vac_tesseractocr_VaccaeOpenCVJNI_getCameraframebitbmp(JNIEnv *env, jcla
     cv::Mat src(bitmapInfo.height, bitmapInfo.width, CV_8UC4, pixelscolor);
 
     //图像处理
-    std::vector<cv::Mat> outdsts=testcv::getrectdetector(src);
+//    std::vector<cv::Mat> outdsts=testcv::getrectdetector(src);
+//    std::vector<cv::Mat> outdsts = facedetector::detectorface(src);
+    std::vector <cv::Mat> outdsts = opticalflow::dealOpticalFlow(src);
 
     //获取原图片的参数
     jclass java_bitmap_class = (jclass) env->FindClass("android/graphics/Bitmap");
@@ -139,4 +143,15 @@ Java_dem_vac_tesseractocr_VaccaeOpenCVJNI_getCameraframebitbmp(JNIEnv *env, jcla
 
 
     return list_obj;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_dem_vac_tesseractocr_VaccaeOpenCVJNI_loadcascade(JNIEnv *env, jclass type, jstring filepath_) {
+    const char *filepath = env->GetStringUTFChars(filepath_, 0);
+
+    // TODO
+    facedetector::loadcascade(const_cast<char *>(filepath));
+
+    env->ReleaseStringUTFChars(filepath_, filepath);
 }

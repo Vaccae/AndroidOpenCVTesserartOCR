@@ -5,6 +5,7 @@
 #include "testcv.h"
 
 
+
 bool testcv::VerifySize(RotatedRect candidate) {
     float error = 0.2; //20%的误差范围
     float aspect = 4.7272;//宽高比例
@@ -24,7 +25,7 @@ bool testcv::VerifySize(RotatedRect candidate) {
 }
 
 //获取多个截取的矩形
-std::vector<Mat> testcv::getrectdetector(Mat &src) {
+vector<Mat> testcv::getrectdetector(Mat &src) {
     Mat gray, imgsobel, dst;
     //转为灰度图
     cvtColor(src, gray, cv::COLOR_BGRA2GRAY);
@@ -40,7 +41,8 @@ std::vector<Mat> testcv::getrectdetector(Mat &src) {
 
     //提取轮廓
     std::vector<std::vector<cv::Point>> contours;
-    findContours(imgsobel, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+//    findContours(imgsobel, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    findContours(imgsobel, contours, RETR_EXTERNAL, CHAIN_APPROX_NONE);
 
     //用来存放旋转矩形的容器
     std::vector<RotatedRect> Rotatedrects;
@@ -65,7 +67,7 @@ std::vector<Mat> testcv::getrectdetector(Mat &src) {
     }
 
     //用于存放识别到的图像
-    std::vector<Mat>output;
+    vector<Mat>output;
     for (size_t i = 0; i < Rotatedrects.size(); i++) {
         Mat dst_warp;
         Mat dst_warp_rotate;
@@ -89,7 +91,7 @@ std::vector<Mat> testcv::getrectdetector(Mat &src) {
         Mat dst(Rotatedrects[i].size, CV_8U);
         //裁剪矩形,下面的函数只支持CV_8U 或者CV_32F格式的图像输入输出。
         //所以要先转换图像将RGBA改为RGB
-        cvtColor(dst_warp_rotate, dst_warp_rotate, CV_RGBA2RGB);
+        cvtColor(dst_warp_rotate, dst_warp_rotate, COLOR_RGBA2RGB);
         //裁剪矩形
         getRectSubPix(dst_warp_rotate, rect_size, Rotatedrects[i].center, dst);
 
@@ -98,7 +100,7 @@ std::vector<Mat> testcv::getrectdetector(Mat &src) {
         resultResized.create(33, 144, CV_8UC3);
         resize(dst, resultResized, resultResized.size(), 0, 0, INTER_CUBIC);
         Mat grayResult;
-        cvtColor(resultResized, grayResult, CV_BGR2GRAY);
+        cvtColor(resultResized, grayResult, COLOR_BGR2GRAY);
         blur(grayResult, grayResult, Size(3, 3));
         //均值化提高对比度
         equalizeHist(grayResult, grayResult);
@@ -109,3 +111,4 @@ std::vector<Mat> testcv::getrectdetector(Mat &src) {
 
     return output;
 }
+

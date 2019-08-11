@@ -1,6 +1,7 @@
 package dem.vac.tesseractocr;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import javax.security.auth.login.LoginException;
 
@@ -20,12 +25,38 @@ public class MainActivity extends AppCompatActivity implements TesseratCallBack 
     private RelativeLayout surfaceviewlayout;
 
 
+    private File mCascadeFile;
+
+    private void copyCascadeFile() {
+        try {
+            // load cascade file from application resources
+            InputStream is = getResources().openRawResource(R.raw.haarcascade_frontalface_alt2);
+            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+            mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface2.xml");
+            if(mCascadeFile.exists()) return;
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         requestPermission();
+
+        copyCascadeFile();
+        VaccaeOpenCVJNI.loadcascade(mCascadeFile.getAbsolutePath());
 
         surfaceviewlayout=findViewById(R.id.surfaceviewlayout);
 

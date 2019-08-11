@@ -5,21 +5,22 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+
 #该变量为真时会创建完整版本的Makefile
 set(CMAKE_VERBOSE_MAKEFILE on)
 
 #定义变量ocvlibs使后面的命令可以使用定位具体的库文件
-set(opencvlibs "D:/PersonalStudio/OpenCV-android-sdk/sdk/native/libs")
+set(opencvlibs "D:/PersonalStudio/OpenCV41-android-sdk/sdk/native/libs")
 
 #调用头文件的具体路径
-include_directories(D:/PersonalStudio/OpenCV-android-sdk/sdk/native/jni/include)
+include_directories(D:/PersonalStudio/OpenCV41-android-sdk/sdk/native/jni/include)
 
 #增加我们的动态库
 add_library(libopencv_java4 SHARED IMPORTED)
 
 #建立链接
 set_target_properties(libopencv_java4 PROPERTIES IMPORTED_LOCATION
-        "${opencvlibs}/${ANDROID_ABI}/libopencv_java3.so")
+        "${opencvlibs}/${ANDROID_ABI}/libopencv_java4.so")
 
 
 # Creates and names a library, sets it as either STATIC

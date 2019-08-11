@@ -63,10 +63,10 @@ public class VaccaeSurfaceView extends SurfaceView implements SurfaceHolder.Call
                     RectF rectF=new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
                     canvas.drawBitmap(cacheBitmap, null, rectF, null);
 
-                    Paint paint = new Paint();
+                    Paint paint=new Paint();
                     paint.setColor(Color.WHITE);
                     paint.setTextSize(60);
-                    canvas.drawText(showtext, 10, canvas.getHeight()-10, paint);
+                    canvas.drawText(showtext, 10, canvas.getHeight() - 10, paint);
 
                     holder.unlockCanvasAndPost(canvas);
                 }
@@ -204,21 +204,22 @@ public class VaccaeSurfaceView extends SurfaceView implements SurfaceHolder.Call
             bitmap=Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
                     m, true);
 
-            //调用JNI方法处理图像
-            List<Bitmap> bitmaps=VaccaeOpenCVJNI.getCameraframebitbmp(bitmap, showtext);
-            bitmap=bitmaps.get(0);
-
-            //这里是加入判断每10帧进行一次OCR识别
             ocrtimes++;
-            if (ocrtimes == 10) {
-                ocrtimes=0;
-                int bmpsize=bitmaps.size();
-                if (bmpsize > 1) {
-                    tesserat=new VaccaeTesserat(getContext());
-                    Bitmap[] bmps=bitmaps.toArray(new Bitmap[bmpsize]);
-                    tesserat.execute(bmps);
+            //调用JNI方法处理图像
+//            if (ocrtimes % 3 == 0) {
+                List<Bitmap> bitmaps=VaccaeOpenCVJNI.getCameraframebitbmp(bitmap, showtext);
+                bitmap=bitmaps.get(0);
+                //这里是加入判断每10帧进行一次OCR识别
+                if (ocrtimes == 10) {
+                    ocrtimes=0;
+                    int bmpsize=bitmaps.size();
+                    if (bmpsize > 1) {
+                        tesserat=new VaccaeTesserat(getContext());
+                        Bitmap[] bmps=bitmaps.toArray(new Bitmap[bmpsize]);
+                        tesserat.execute(bmps);
+                    }
                 }
-            }
+//            }
             stream.close();
         } catch (IOException e) {
             e.printStackTrace();

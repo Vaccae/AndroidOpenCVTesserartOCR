@@ -11,7 +11,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11"
+//                arguments'-DANDROID_PLATFORM=android-19',
+//                        '-DANDROID_STL=c++_static'
+                cppFlags "-std=c++11 -frtti -O3 -fexceptions"
                 //我们的APP要支持的CPU架构
                 abiFilters 'arm64-v8a','armeabi-v7a'
             }

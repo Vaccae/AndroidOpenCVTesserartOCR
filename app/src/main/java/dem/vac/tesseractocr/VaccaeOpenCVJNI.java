@@ -17,4 +17,6 @@ import java.util.List;
     }
 
     public native static List<Bitmap> getCameraframebitbmp(Bitmap bmp,String text);
+
+    public native static void loadcascade(String filepath);
 }
